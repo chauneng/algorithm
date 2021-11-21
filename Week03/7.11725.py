@@ -7,7 +7,7 @@ dic = {}
 for i in range(int(sys.stdin.readline())):
     dic[i+1] = set()
 
-for i in range(len(dic)-1):
+for _ in range(len(dic)-1):
     a, b = map(int, sys.stdin.readline().split())
     dic[a].add(b)
     dic[b].add(a)
