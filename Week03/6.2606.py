@@ -10,31 +10,14 @@ for j in range(int(stdin.readline())):
     dic[a].add(b)
     dic[b].add(a)
 
-parents = list(range(len(dic)+1))
+visited = []
 
-def find_parents(num: int) -> int:
-    if num == parents[num]:
-        return num
-
-    parents[num] = find_parents(parents[num])
-    return parents[num]
-
-def union(a: int, b: int):
-    pa = find_parents(a)
-    pb = find_parents(b)
-
-    if pa == pb:
-        return
-
-    if pa < pb:
-        parents[b] = a
-
-    else:
-        parents[a] = b
-
-for i in range(1, len(dic)):
-    for j in dic[i]:
-        union(j, i)
+def dfs(start: int, dic: dict):
+    for k in dic[start]:
+        if k not in visited:
+            visited.append(k)
+            dfs(k, dic)
 
 # print(parents)
-print(parents.count(1)-1)
+dfs(1, dic)
+print(len(visited)-1)
