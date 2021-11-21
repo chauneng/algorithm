@@ -1,14 +1,16 @@
 from sys import stdin
 
-N, M = map(int, stdin.readline().split())
-graph = [[] for _ in range(N+1)]
+dic = {}
 
-for __ in range(M):
+for i in range(int(stdin.readline())):
+    dic[i+1] = set()
+
+for j in range(int(stdin.readline())):
     a, b = map(int, stdin.readline().split())
-    graph[a].append(b)
-    graph[b].append(a)
+    dic[a].add(b)
+    dic[b].add(a)
 
-parents = list(range(N+1))
+parents = list(range(len(dic)+1))
 
 def find_parents(num: int) -> int:
     if num == parents[num]:
@@ -20,17 +22,19 @@ def find_parents(num: int) -> int:
 def union(a: int, b: int):
     pa = find_parents(a)
     pb = find_parents(b)
-    
+
     if pa == pb:
         return
 
     if pa < pb:
         parents[b] = a
+
     else:
         parents[a] = b
 
-for i in range(1, len(graph)):
-    for j in graph[i]:
+for i in range(1, len(dic)):
+    for j in dic[i]:
         union(j, i)
 
-print(len(set(parents))-1)
+# print(parents)
+print(parents.count(1)-1)
