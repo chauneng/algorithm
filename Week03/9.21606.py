@@ -7,20 +7,20 @@ for i in range(int(sys.stdin.readline())):
 
 indoor = [0]
 indoor.extend(map(int, sys.stdin.readline().rstrip('\n')))
+visited = [0]*(len(dic)+1)
 
 cnt = 0
 
 def dfs(num: int):
     visited[num] = 1
-    global cnt
+    global n
     for i in dic[num]:
 
         if not visited[i]:
             if indoor[i]:
-                cnt += 1
+                n += 1
             else:
                 dfs(i)
-        
 
 for _ in range(len(dic)-1):
     a, b = map(int, sys.stdin.readline().split())
@@ -28,13 +28,14 @@ for _ in range(len(dic)-1):
     dic[b].add(a)
 
 for j in range(1, len(dic)+1):
-
-    visited = [0]*(len(dic)+1)
-
-    if indoor[j]:
-        dfs(j)
+    n = 0
+    if not indoor[j]:
+        if not visited[j]:
+            dfs(j)
+            cnt += n*(n-1)
+    else:
+        for k in dic[j]:
+            if indoor[k]:
+                cnt += 1
 
 print(cnt)
-
-# print(list(indoor))
-# print(dic)
