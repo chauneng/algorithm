@@ -1,73 +1,80 @@
 import sys
-from collections import deque
 sys.setrecursionlimit(10**5)
+read = sys.stdin.readline
 
+def melt(x, y):
+    cnt = 0
 
-N, M = map(int, sys.stdin.readline().split())
-coordinate = {}
-queue = deque()
-ans = 0
-cnt = 0
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+
+        if 0 <= nx < N and 0 <= ny < M:
+            if arr[nx][ny] == 0:
+                cnt += 1
+
+    if cnt != 0:
+        return x, y, cnt
+    else:
+        return None
+
+def dfs(x, y):
+    visited[x][y] = True
+
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+
+        if 0 <= nx < N and 0 <= ny < M:
+            if not visited[nx][ny] and arr[nx][ny] != 0:
+                dfs(nx, ny)
+
+# 입력
+N, M = map(int, read().split())
+arr = [list(map(int, read().split())) for _ in range(N)]
+
+# 풀이
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-for i in range(N):
-    coordinate[i] = list(map(int, sys.stdin.readline().split()))
-
-def dfs(row: int, column: int):
-    visited[row][column] = True
-
-    for i in range(4):
-        nx = row + dx[i]
-        ny = column + dy[i]
-
-        if not visited[nx][ny] and coordinate[nx][ny]:
-            dfs(nx, ny)
-
-def nThow(row, column):
-    degree = 0
-    for i in range(4):
-        nx = row + dx[i]
-        ny = column + dy[i]
-        if not coordinate[nx][ny]:
-            degree -= 1
-    if degree:
-        return (row, column, degree)
-
+answer = 0
 
 while True:
+    answer += 1
 
-    ans += 1
+    # 1. 빙하 녹이기
+    reduce = []  # x, y, 녹는 높이
+    for x in range(1, N):
+        for y in range(1, M):
+            if arr[x][y] != 0:
+                h = melt(x, y)
 
-    for i in range(1, N):
-        for j in range(1, M):
-            if coordinate[i][j]:
-                queue.append(nThow(i, j))
-    
-    while queue:
-        thaw = queue.popleft()
-    if thaw != None:
-        coordinate[thaw[0]][thaw[1]] = max(coordinate[thaw[0]][thaw[1]] + thaw[2], 0)
+                if h is not None:
+                    reduce.append(h)
 
-    visited =[[0] * (M) for _ in range(N)]
+    for x, y, h in reduce:
+        arr[x][y] = arr[x][y] - h if arr[x][y] - h > 0 else 0
 
-    for i in range(1, N):
-        for j in range(1, M):
-            if coordinate[i][j] and not visited[i][j]:
-                    cnt += 1
-                    if cnt == 2:
-                        break
-                    dfs(i, j)
-    
-    if cnt > 1:
-        break
-    
-    melt = 0
-    for i in range(N):
-        for j in range(M):
-            melt += coordinate[i][j]
-    if not melt:
-        ans = 0
+    # 2. 빙하 개수 구하기
+    cnt = 0
+    visited = [[False] * M for _ in range(N)]
+
+    for x in range(1, N):
+        for y in range(1, M):
+            if arr[x][y] != 0 and not visited[x][y]:
+                cnt += 1
+
+                if cnt == 2:
+                    break
+
+                dfs(x, y)
+
+    if cnt > 1:  # 종료 조건
         break
 
-print(ans)
+    if sum(map(sum, arr[1:-1])) == 0:  # 빙하가 다 녹을때까지 덩어리가 1개?
+        answer = 0
+        break
+
+# 출력
+print(answer)
