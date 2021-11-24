@@ -7,7 +7,6 @@ visited = []
 
 for _ in range(R):
     m.append(list(stdin.readline().rstrip('\n')))
-    visited.append([False]*C)
 
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
@@ -17,10 +16,10 @@ wQueue, hQueue = deque(), deque()
 for i in range(R):
     for j in range(C):
         if m[i][j] == '*':
-            m[i][j] = 0
+            # m[i][j] = 0
             wQueue.append((i, j))
         elif m[i][j] == 'S':
-            m[i][j] = 0
+            # m[i][j] = 0
             hQueue.append((i, j, 0))
 
 while wQueue:
@@ -34,11 +33,9 @@ while wQueue:
             m[newWRow][newWColumn] = m[wRow][wColumn] + 1
             wQueue.append((newWRow, newWColumn))
 
-goal = False
 while hQueue:
     hRow, hColumn, day = hQueue.popleft()
     if m[hRow][hColumn] == 'D':
-        goal = True
         day += 1
         break
     for i in range(4):
@@ -46,7 +43,6 @@ while hQueue:
         newHColumn = hColumn + dy[i]
         if 0 <= newHRow < R and 0 <= newHColumn <C and not visited[newHRow][newHColumn]:
             if m[newHRow][newHColumn] == '.' and m[newHRow][newHColumn] > day+1 :
-                visited[newHRow][newHColumn] = True
                 hQueue.append((newHRow, newHColumn, day+1))
 
 if goal:
