@@ -2,24 +2,26 @@ from collections import deque
 from sys import stdin
 
 N, K = map(int, stdin.readline().split())
-coin = sorted(set([int(stdin.readline()) for _ in range(N)]))
+coins = sorted(set([int(stdin.readline()) for _ in range(N)]))
 
-# coin = sorted(set(coin))
-v = 0
-q = 0
+queue = deque()
+
+for coin in coins:
+    queue.append((1, coin))
 
 def bfs():
-    global q
-    global v
-    queue = deque()
-
-    for i in coin:    
-        queue.append(q+1, v+i)
-    q += 1
 
     while queue:
-
-        nc, vc = queue.popleft()
+        qc, vc = queue.popleft()
         if vc == K:
-            print(nc)
-        else:
+            return qc
+        elif vc < K:
+            for coin in coins:
+                queue.append((qc+1, vc+coin))
+
+ans = bfs()
+
+if ans is not None:
+    print(ans)
+else:
+    print(-1)
