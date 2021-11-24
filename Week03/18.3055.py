@@ -1,46 +1,55 @@
 from sys import stdin
-import heapq
+from collections import deque
 
 R, C = map(int, stdin.readline().split())
 m = []
+visited = []
 
 for _ in range(R):
     m.append(list(stdin.readline().rstrip('\n')))
+    visited.append([False]*C)
 
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
 
-def bfs():
-    time = 1
-    while queue:
-
-        t, id, row, column = heapq.heappop(queue)
-    
-        for i in range(4):
-            nRow = row + dx[i]
-            nColumn = column + dy[i]
-            if not id and 0 <= nRow < R and 0 <= nColumn < C and m[nRow][nColumn] == '.':
-                m[nRow][nColumn] = '*'
-                heapq.heappush(queue, (time, 0, nRow, nColumn))
-    
-            if id and 0 <= nRow < R and 0 <= nColumn <C:
-                if m[nRow][nColumn] == 'D':
-                    return time
-                elif id and 0 <= nRow < R and 0 <= nColumn < C and m[nRow][nColumn] == '.':
-                    m[nRow][nColumn] = 'S'
-                    heapq.heappush(queue, (time, 1, nRow, nColumn))
-        time += 1
-    return 'KAKTUS'
-
-queue = []
+wQueue, hQueue = deque(), deque()
 
 for i in range(R):
     for j in range(C):
         if m[i][j] == '*':
             m[i][j] = 0
-            queue.append((0, 0, i, j))
+            wQueue.append((i, j))
         elif m[i][j] == 'S':
             m[i][j] = 0
-            queue.append((0, 1, i, j))
+            hQueue.append((i, j, 0))
 
-print(bfs())
+while wQueue:
+    # if len(wQueue) == 0:
+    #     return 'KAKTUS'
+    wRow, wColumn = wQueue.popleft()
+    for i in range(4):
+        newWRow = wRow + dx[i]
+        newWColumn = wColumn + dy[i]
+        if 0 <= newWRow < R and 0 <= newWColumn < C and m[newWRow][newWColumn] == '.':
+            m[newWRow][newWColumn] = m[wRow][wColumn] + 1
+            wQueue.append((newWRow, newWColumn))
+
+goal = False
+while hQueue:
+    hRow, hColumn, day = hQueue.popleft()
+    if m[hRow][hColumn] == 'D':
+        goal = True
+        day += 1
+        break
+    for i in range(4):
+        newHRow = hRow + dx[i]
+        newHColumn = hColumn + dy[i]
+        if 0 <= newHRow < R and 0 <= newHColumn <C and not visited[newHRow][newHColumn]:
+            if m[newHRow][newHColumn] == '.' and m[newHRow][newHColumn] > day+1 :
+                visited[newHRow][newHColumn] = True
+                hQueue.append((newHRow, newHColumn, day+1))
+
+if goal:
+    print(day)
+else:
+    print('KAKTUS')
