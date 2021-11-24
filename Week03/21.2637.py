@@ -4,36 +4,33 @@ from collections import deque
 N = int(stdin.readline())
 M = int(stdin.readline())
 
-outdegree = {}
-parts = {}
-needs = {}
+indegree = [0]*(N+1) 
+parts = [[0]*(N+1) for _ in range(N+1)]
 queue = deque()
-
-for i in range(1, N+1):
-    outdegree[i] = 0
-    parts[i] = []
-    needs[i] = 0
 
 for _ in range(M):
     a, b, w = map(int, stdin.readline().split())
-    parts[a].append((b, w))
-    outdegree[b] += 1
+    parts[b][a] = w
+    indegree[a] += 1
 
+basic_part = []
 for i in range(1, N+1):
-    if not outdegree[i]:
+    if not indegree[i]:
         queue.append(i)
+        basic_part.append(i)
+
+for basic in basic_part:
+    parts[basic][basic] = 1
 
 while queue:
     p = queue.popleft()
-    
-    for part in parts[p]:
-        num, quantity = part
-        needs[num] += quantity
-        outdegree[num] -= 1
-        needs[p] -= 1
-        for i in range(quantity):
-            queue.append(num)
+    for i in range(1, N + 1):
+        if parts[p][i] > 0 and indegree[i] > 0:
+            for basic in basic_part:
+                parts[i][basic] += parts[p][basic] * parts[p][i]
+            indegree[i] -= 1
+            if indegree[i] == 0:
+                queue.append(i)
 
-for i in range(1, N+1):
-    if needs[i]>0:
-        print(i, needs[i])
+for basic in basic_part:
+    print(basic, parts[N][basic])
