@@ -1,39 +1,50 @@
 from sys import stdin
-from collections import deque
+import heapq
 
 N = int(stdin.readline())
-M = int(stdin.readline())
+adj = [[0]*(N+1)]
 
-outdegree = {}
-parts = {}
-needs = {}
-queue = deque()
+for _ in range(N):
+    a = list(map(int, stdin.readline().rstrip('\n')))
+    a.insert(0,0)
+    adj.append(a)
 
+queue = []
+outdegree = [0] * (N+1)
+
+graph = {}
 for i in range(1, N+1):
-    outdegree[i] = 0
-    parts[i] = []
-    needs[i] = 0
-
-for _ in range(M):
-    a, b, w = map(int, stdin.readline().split())
-    parts[a].append((b, w))
-    outdegree[b] += 1
-
+    graph[i] = set()
+for i in range(1, N+1):
+    for j in range(1, N+1):
+        if adj[i][j]:
+            graph[j].add(i)
+            outdegree[i] += 1
+# print(graph)
+# print(outdegree)
+flag = False
 for i in range(1, N+1):
     if not outdegree[i]:
-        queue.append(i)
+        heapq.heappush(queue, -i)
+        flag = True
+# print(queue)
+
+vertex = {}
+for i in range(1, N+1):
+    vertex[i] = i
 
 while queue:
-    p = queue.popleft()
-    
-    for part in parts[p]:
-        num, quantity = part
-        needs[num] += quantity
-        outdegree[num] -= 1
-        needs[p] -= 1
-        for i in range(quantity):
-            queue.append(num)
+    crrV = -heapq.heappop(queue)
+    for adjV in graph[crrV]:
+        
+        if vertex[adjV] > vertex[crrV]:
+            vertex[adjV] = vertex[crrV]
+            vertex[crrV] = adjV
+            heapq.heappush(queue, -adjV)
 
-for i in range(1, N+1):
-    if not outdegree:
-        print(i, needs[i])
+if flag:
+    for i in range(1, N):
+        print(vertex[i], end=' ')
+    print(vertex[N])
+else:
+    print(-1)
