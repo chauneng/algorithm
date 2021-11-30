@@ -5,7 +5,7 @@ seq = list(map(int, stdin.readline().split()))
 
 nextTurn = [float('inf')]*(K+1)
 newSeq = []
-for i in range(K-1, -1, -1):
+for i in reversed(range(K)):
     num = seq[i]
     newSeq.append([nextTurn[num], num])
     nextTurn[num] = i
@@ -24,6 +24,7 @@ while newSeq:
     if len(plug)<=N:
         using[gaget] = nextUse
         continue
+
     plug = plug - {using.index(max(using))}
     using[using.index(max(using))] = 0
 
