@@ -1,23 +1,17 @@
 from sys import stdin
-from collections import deque
+from math import sqrt
 
 N, M = map(int, stdin.readline().split())
 SMALL = {int(stdin.readline()) for _ in range(M)}
 
-dx = (-1, 0, 1)
+dp = [[float('inf')]*(int(sqrt(2*N))+2) for _ in range(N+1)]
+dp[1][0] = 0
 
-queue = deque()
-queue.append([1, 1, 0])
-ans = -1
-while queue:
-    speed, position, jump = queue.popleft()
-    if N == speed+position:
-        ans = jump
-        break
+for p in range(2, N+1):
+    if p in SMALL:
+        continue
+    for v in range(int(sqrt(2*p)+1)):
+        dp[p][v] = min(dp[p-v][v-1], dp[p-v][v], dp[p-v][v+1])+1
 
-    for i in range(3):
-        newSpeed = speed+dx[i]
-        if newSpeed>0 and (newSpeed+position) not in SMALL:
-            queue.append([newSpeed, position+speed, jump+1])
-
-print(ans)
+ans = min(dp[N])
+print(ans) if ans < float('inf') else print(-1)
