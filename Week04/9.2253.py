@@ -2,8 +2,7 @@ from sys import stdin
 from collections import deque
 
 N, M = map(int, stdin.readline().split())
-SMALL = [int(stdin.readline()) for _ in range(M)]
-SMALL.sort()
+SMALL = {int(stdin.readline()) for _ in range(M)}
 
 dx = (-1, 0, 1)
 
@@ -18,13 +17,7 @@ while queue:
 
     for i in range(3):
         newSpeed = speed+dx[i]
-        if newSpeed>0:
-            flag=True
-            for i in range(M):
-                if SMALL[i] == position+newSpeed:
-                    flag = False
-                    break
-            if flag:
-                queue.append([newSpeed, position+speed, jump+1])
+        if newSpeed>0 and (newSpeed+position) not in SMALL:
+            queue.append([newSpeed, position+speed, jump+1])
 
 print(ans)
