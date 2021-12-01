@@ -1,9 +1,5 @@
-import sys
-
-t = int(input())
-i = 0
-
-while i < t :
-    i += 1
-    a, b = map(int, sys.stdin.readline().split())
+from sys import stdin
+N = int(stdin.readline())
+for i in range(N):
+    a, b = map(int, stdin.readline().split())
     print(a+b)
