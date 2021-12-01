@@ -3,24 +3,20 @@ from sys import stdin
 N = int(stdin.readline())
 
 dp = [0] * N
+dp[0] = int(stdin.readline())
 
 if N == 1:
-    print(stdin.readline())
-else:
-    for i in range(N):
-       dp[i] = int(stdin.readline())
+    print(dp[0])
+    exit(0)
+elif N == 2:
+    dp[1] = int(stdin.readline())
+    print(sum(dp))
+    exit(0)
 
-    if N < 3:
-        print(sum(dp))
-        exit(0)
-
+tmp = dp[0]
+for i in range(N-1):
     wine = int(stdin.readline())
+    dp[i+1] = max(dp[i-2]+tmp+wine, dp[i-1]+wine, dp[i])
+    tmp = wine
 
-    dp[0] = arr[0]
-    dp[1] = arr[0]+arr[1]
-    dp[2] = max(arr[0]+arr[2], arr[1]+arr[2])
-
-    for i in range(3, N):
-        dp[i] = max(dp[i-3]+arr[i-1]+arr[i], dp[i-2]+arr[i])
-
-    print(max(dp[-1], dp[-2]))
+print(max(dp[-1], dp[-2])) 
